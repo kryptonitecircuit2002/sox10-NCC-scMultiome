@@ -43,7 +43,7 @@ meta_data.H33 <- read.csv(
 )
 
 #Create gene annotaion from GTF
-gref.path = "D:/Transit/Single_Cell+ATAC/Control/ATAC/Data+Analysis/Analysis_Control/Danio_rerio.GRCz11.105.gtf"
+gref.path = "../Danio_rerio.GRCz11.105.gtf"
 gtf_zf <- rtracklayer::import(gref.path)
 gene.coords.zf <- gtf_zf
 gene.coords.zf <- gene.coords.zf[! is.na(gene.coords.zf$gene_name),]
@@ -78,7 +78,7 @@ chrom_assay_H33 <- CreateChromatinAssay(
 )
 Seurat.H33[["ATAC"]] <- chrom_assay_H33
 
-#since the number of cells in sample was less than control, we downsampled at the very beginning and started with equal number of cells across control and condition
+#since the number of cells in sample was less than control, we downsampled control at the very beginning and started with equal number of cells across control and condition
 #perform downsampling
 Control.H3 <- Control.data[, sample(colnames(Control.data), size =1346, replace=F)]
 
@@ -159,10 +159,8 @@ RNA_cluster.ids <- c("0" = "mesenchymal", "1" = "twist1a+ progenitor", "2" = "ne
                      "10" = "skeletal muscle progenitor", "11" = "twist1a+ progenitor", "12" = "iridoblast", "13" = "skeletal muscle progenitor",
                      "14" = "neuronal", "15" = "otic", "16" = "neural/glial")
 
-New_cluster.ids <- c("0" = "twist1a+ progenitor", "1" = "twist1a+ progenitor", "2" = "mesenchymal",
-                     "3" = "neural/glial", "4" = "otic", "5" = "foxd3 progenitor 1", "6" = "MIX+", "7" = "neuronal", "8" = "foxd3 progenitor2",
-                    "9" = "skeletal muscle progenitor", "10" = "melanoblast",  "11" = "twist1a+ progenitor", "12" = "iridoblast")
-H3.3.combined <- RenameIdents(H3.3.combined, New_cluster.ids)
+
+H3.3.combined <- RenameIdents(H3.3.combined, RNA_cluster.ids)
 #for ATAC
 #first I run lsi reduction for combined object
 DefaultAssay(H3.3.combined) <- "ATAC"
