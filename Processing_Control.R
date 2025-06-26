@@ -128,3 +128,13 @@ Control.data <- FindNeighbors(Control.data, reduction = "pca.control", dims = 1:
 Control.data <- FindClusters(Control.data, resolution = 0.7)
 Control.data <- RunUMAP(Control.data, reduction = "pca.control", reduction.name = "umap.rna.control", dims = 1:30, verbose = FALSE, spread = 0.32, min.dist = 0.35)
 DimPlot(Control.data, reduction = "umap.rna.control", label = TRUE)
+
+##Wnn UMAP
+Control.data <- FindMultiModalNeighbors(Control.data,
+                                   reduction.list = list("pca", "lsi"),
+                                   dims.list = list(1:30, 2:10),
+                                   modality.weight.name = 'RNA.weight')
+Control.data <- FindClusters(Control.data, graph.name = "wsnn", algorithm = 3, verbose = FALSE, resolution = 0.7)
+Control.data <- RunUMAP(Control.data, nn.name = "weighted.nn", 
+                   reduction.name = "wnn.umap", reduction.key = "wnnUMAP_", spread = 0.32, min.dist = 0.35)
+DimPlot(Control.data, reduction = "wnn.umap", label = T)
