@@ -17,19 +17,10 @@ library(data.table)
 
 set.seed(1234)
 #Read Data
-data<- readRDS(".../preprocessed_data.rds")
-#RNA Assay normalization
-data <-  SCTransform(data, vst.flavor = "v2", verbose = FALSE) %>%
-  RunPCA(npcs = 30, verbose = FALSE) %>%
-  RunUMAP(reduction = "pca", dims = 1:30, verbose = FALSE) %>%
-  FindNeighbors(reduction = "pca", dims = 1:30, verbose = FALSE) %>%
-  FindClusters(resolution = 0.5, verbose = FALSE)
+data<- readRDS(".../data_clustered.rds")
 
-#Peaks Assay normalisation
+#Peaks Assay 
 DefaultAssay(data) <- "peaks"
-data <- RunTFIDF(data)
-data <- FindTopFeatures(data, min.cutoff = "q5")
-data <- RunSVD(data)
 seqlevelsStyle(data) <- "NCBI"
 seqlevelsStype(BSgenome.Drerio.UCSC.danRer11) <- "NCBI"  #To ensure seqlevels match between peaks of object and supplied genome
 data <- RegionStats(data, genome = BSgenome.Drerio.UCSC.danRer11)
@@ -62,9 +53,6 @@ save(gene.promoters, file = "..../promoterpeaks_allcells.RData")
 
 ##ATAC assay
 DefaultAssay(data) <- "ATAC"
-data <- RunTFIDF(data)
-data <- FindTopFeatures(data, min.cutoff = "q5")
-data <- RunSVD(data)
 data <- RegionStats(data, genome = BSgenome.Drerio.UCSC.danRer11)
 data <- LinkPeaks(data,
                   peak.assay = "ATAC",
@@ -89,14 +77,6 @@ ATAC_links <- ATAC_links[-promoter.peaks_ATACassay]
 
 save(ATAC_links, file = "..../peaksassay_enhancer_links_filtered_allcells.RData")
 save(gene.promoters, file = "..../promoterpeaks_allcells.RData")
-
-# PCA, clustering, and UMAP visualization
-DefaultAssay(data) <- "SCT"
-data <- RunPCA(data, verbose = FALSE, reduction.name = "pca")
-data <- FindNeighbors(data, reduction = "pca", dims = 1:30)
-data <- FindClusters(data, resolution = 0.7)
-data <- RunUMAP(data, reduction = "pca", reduction.name = "umap.rna", dims = 1:30, verbose = FALSE, spread = 0.32, min.dist = 0.35)
-DimPlot(data, reduction = "umap.rna", label = TRUE)
 
 #Save RData
 saveRDS(data, file = ".../data_linked.rds")
