@@ -16,70 +16,71 @@ library(BSgenome.Drerio.UCSC.danRer11)
 
 set.seed(1234)
 
-counts_control <- Read10X_h5("E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/Control_sample/bin/filtered_feature_bc_matrix.h5")
-metadata_control <- read.csv(
-  file = "E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/Control_sample/bin/per_barcode_metrics.csv",
+counts <- Read10X_h5(".../bin/filtered_feature_bc_matrix.h5")
+metadata <- read.csv(
+  file = ".../bin/per_barcode_metrics.csv",
   header = TRUE,
   row.names = 1
 )
-fragpath_control <- "E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/Control_sample/bin/atac_fragments.tsv.gz"
+fragpath <- ".../bin/atac_fragments.tsv.gz"
 
 #Annotation
-genome.control <- import("E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/Reference_genome/Danio_rerio.GRCz11.113.filtered.gtf")
-genome(genome.control) <- "GRCz11"
+genome <- import(".../Danio_rerio.GRCz11.113.filtered.gtf")
+genome(genome) <- "GRCz11"
 
 
 #create Seurat object
-Control.data <- CreateSeuratObject(counts = counts_control$`Gene Expression`, 
+data <- CreateSeuratObject(counts = counts$`Gene Expression`, 
                                    assay = 'RNA',
-                                   project = 'Control',
-                                   meta.data = metadata_control)
+                                   project = 'data',
+                                   meta.data = metadata)
 
-Control.data[["percent.mt"]] <- PercentageFeatureSet(Control.data, pattern = "^MT-")
-atac_counts.c <- counts_control$Peaks
+data[["percent.mt"]] <- PercentageFeatureSet(data, pattern = "^MT-")
+atac_counts.c <- counts$Peaks
 grange.counts.c <- StringToGRanges(rownames(atac_counts.c), sep = c(":", "-"))
 grange.use.c <- seqnames(grange.counts.c) %in% standardChromosomes(grange.counts.c)
 atac_counts.c <- atac_counts.c[as.vector(grange.use.c), ]
 
-Control.data[['ATAC']] <- CreateChromatinAssay(
+data[['ATAC']] <- CreateChromatinAssay(
   counts = atac_counts.c,
   sep = c(":", "-"),
-  genome = genome(genome.control),
-  fragments = fragpath_control,
+  genome = genome(genome),
+  fragments = fragpath,
   min.cells = 10,
-  annotation = genome.control
+  annotation = genome
 )
 
 #QC
-DefaultAssay(Control.data) <- "ATAC"
+DefaultAssay(data) <- "ATAC"
 # compute nucleosome signal score per cell
-Control.data <- NucleosomeSignal(object = Control.data)
+data <- NucleosomeSignal(object = data)
 
 # compute TSS enrichment score per cell
-Control.data <- TSSEnrichment(object = Control.data, fast = FALSE)
-DensityScatter(Control.data, x = 'nCount_ATAC', y = 'TSS.enrichment', log_x = TRUE, quantiles = TRUE)
+data <- TSSEnrichment(object = data, fast = FALSE)
+DensityScatter(data, x = 'nCount_ATAC', y = 'TSS.enrichment', log_x = TRUE, quantiles = TRUE)
 
 #Peak-calling
-#peak calling
-control.peaks <- system('bash -c "/home/ayush/.local/bin/macs2 callpeak -t /mnt/d/Transit/Single_Cell+ATAC/New_Integrative_Analysis/Control_sample/Control_NewGRC/atac_fragments.tsv.gz -g 1.4e+09 -f BED --nomodel --extsize 200 --shift -100 -n Control --outdir /mnt/d/Transit/Single_Cell+ATAC/New_Integrative_Analysis/Control_sample//Peak_calling" ', 
+system('bash -c "...bin/macs2 callpeak -t /mnt/..../atac_fragments.tsv.gz -g 1.4e+09 -f BED --nomodel --extsize 200 --shift -100 -n data --outdir .../Peak_calling" ', 
                         wait = TRUE,  ignore.stderr = FALSE,  ignore.stdout = FALSE)
-peak.path_c <- "E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/Control_sample/Peak_calling/Control_peaks.narrowPeak"
-control.peaks <- rtracklayer::import(peak.path_c, format = "narrowPeak")
-control.peaks <- keepStandardChromosomes(control.peaks, pruning.mode = 'coarse')
+peak.path_c <- ".../Peak_calling/data_peaks.narrowPeak"
+peaks <- rtracklayer::import(peak.path_c, format = "narrowPeak")
+peaks <- keepStandardChromosomes(peaks, pruning.mode = 'coarse')
 
-macs_count.control <- FeatureMatrix(fragments = Fragments(Control.data),
-                                    features = control.peaks,
-                                    cells = colnames(Control.data))
-Control.data[['peaks']] <- CreateChromatinAssay(
-  counts = macs_count.control,
+macs_count <- FeatureMatrix(fragments = Fragments(data),
+                                    features = peaks,
+                                    cells = colnames(data))
+data[['peaks']] <- CreateChromatinAssay(
+  counts = macs_count,
   sep = c(":", "-"),
-  genome = genome(genome.control),
-  fragments = fragpath_control,
+  genome = genome(genome),
+  fragments = fragpath,
   min.cells = 10,
-  annotation = genome.control
+  annotation = genome
 )
-DefaultAssay(Control.data) <- "peaks"
-Control.data <- NucleosomeSignal(object = Control.data)
-Control.data <- TSSEnrichment(object = Control.data, fast = FALSE)
-DensityScatter(Control.data, x = 'nCount_ATAC', y = 'TSS.enrichment', log_x = TRUE, quantiles = TRUE)
+DefaultAssay(data) <- "peaks"
+data <- NucleosomeSignal(object = data)
+data <- TSSEnrichment(object = data, fast = FALSE)
+DensityScatter(data, x = 'nCount_ATAC', y = 'TSS.enrichment', log_x = TRUE, quantiles = TRUE)
+
+saveRDS(data, file = "..../preprocessed_data.rds")
 
