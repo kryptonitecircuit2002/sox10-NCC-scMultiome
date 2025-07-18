@@ -1,12 +1,31 @@
-#RNA Assay normalization
+library(Seurat)
+library(Signac)
+library(dplyr)
+library(ggplot2)
+library(GenomicRanges)
+library(future)
+library(patchwork)
+library(hdf5r)
+library(readr)
+library(pheatmap)
+library(ggrepel)
+library(LSD)
+library(MASS)
+library(ensembldb)
+library(BSgenome.Drerio.UCSC.danRer11)
+library(data.table)
+
+set.seed(1234)
+#Read Data
 data<- readRDS(".../preprocessed_data.rds")
+#RNA Assay normalization
 data <-  SCTransform(data, vst.flavor = "v2", verbose = FALSE) %>%
   RunPCA(npcs = 30, verbose = FALSE) %>%
   RunUMAP(reduction = "pca", dims = 1:30, verbose = FALSE) %>%
   FindNeighbors(reduction = "pca", dims = 1:30, verbose = FALSE) %>%
   FindClusters(resolution = 0.5, verbose = FALSE)
 
-#Peaks normalisation
+#Peaks Assay normalisation
 DefaultAssay(data) <- "peaks"
 data <- RunTFIDF(data)
 data <- FindTopFeatures(data, min.cutoff = "q5")
