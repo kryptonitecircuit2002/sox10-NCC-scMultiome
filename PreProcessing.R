@@ -82,5 +82,21 @@ data <- NucleosomeSignal(object = data)
 data <- TSSEnrichment(object = data, fast = FALSE)
 DensityScatter(data, x = 'nCount_ATAC', y = 'TSS.enrichment', log_x = TRUE, quantiles = TRUE)
 
+##Quality Control
+VlnPlot(
+  object = data,
+  features = c("nCount_RNA", "nCount_ATAC", "TSS.enrichment", "nucleosome_signal", "percent.mt"),
+  ncol = 4,
+  pt.size = 0) 
+
+#Filter out low quality cells
+data  <- subset(
+  x = data,
+  subset = nCount_ATAC < 150000 &
+    nCount_RNA < 40000 &
+    nucleosome_signal < 1.75 &
+    TSS.enrichment < 10
+)
+
 saveRDS(data, file = "..../preprocessed_data.rds")
 
