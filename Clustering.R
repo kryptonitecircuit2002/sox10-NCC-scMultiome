@@ -17,7 +17,7 @@ library(BSgenome.Drerio.UCSC.danRer11)
 set.seed(1234)
 
 #Read R object
-data <- readRDS(".../data_linked.rds")
+data <- readRDS(".../preprocessed_data.rds")
 
 # PCA, clustering, and UMAP visualization
 DefaultAssay(data) <- "SCT"
