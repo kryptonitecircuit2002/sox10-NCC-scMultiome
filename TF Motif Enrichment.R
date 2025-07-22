@@ -51,3 +51,4 @@ MotifPlot(
   motifs = head(rownames(enriched.motifs))
 )
 
+saveRDS(".../data_motifenriched.rds")
