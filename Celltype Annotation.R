@@ -54,14 +54,20 @@ DimPlot(data, reduction = "umap.rna.control", label = T, label.size = 5, repel =
 ##ATAC derived
 DefaultAssay(data) <- "peaks"
 gene.activities <- GeneActivity(data)
-data[["Gene Activity"]] <- gene.activites
-DefaultAssay(data) <- "Gene Activity"
+data[['Gene.Activity']] <- CreateAssayObject(counts = gene.activities)
+data <- NormalizeData(
+  object = data,
+  assay = 'Gene.Activity',
+  normalization.method = 'LogNormalize',
+  scale.factor = median(data$nCount_Gene.Activity)
+)
+DefaultAssay(data) <- "Gene.Activity"
 DotPlot(data, features = c("twist1a", "grem2b", "col11a1b", "lamc3", "foxd3", "crestin", "sox10", "zeb2a", "aox5", "paics", "dct", "mitfa", "tyr", "ltk", "alx4a", "gfap", "pou3f1", "her12", "elavl3", "elavl4", "oc90", "epcam", "neurod1", "musk", "tpma")) +
   geom_point(aes(size=pct.exp), shape = 21, colour="black", stroke=0.5) +
   scale_colour_viridis(option="viridis") +
   guides(size=guide_legend(override.aes=list(shape=21, colour="black", fill="white"))) + 
   RotatedAxis() + 
-  coord_flip() + ggtitle("Markers for Cluster Annotation")
+  coord_flip() + ggtitle("Markers for ATAC Cluster Annotation")
 
 DefaultAssay(data) <- "peaks"
 Idents(data) <- data$ATAC_snn_res.5
