@@ -1,4 +1,4 @@
-This is a pipeline I modified to combine multi-modal multiome datasets across two conditions: control and knockdown of a histone variant. It uses Seurat v5.1.0 and Signac v1.14.0 to analyse, integrate and visualise differences across conditions
+This is a pipeline I modified to analyse multi-modal multiome datasets of sox10+ NCCs. It uses Seurat v5.1.0 and Signac v1.14.0 to analyse, integrate and visualise differences across conditions
 The kit used for the run was 10X Genomics Single cell ATAC + 3' Gene Expression kit and it was sequenced on Illumina NextSeq 1000 platform
 The input files are:
 1) .h5 count matrix 
