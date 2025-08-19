@@ -4,6 +4,7 @@ library(Seurat)
 library(SeuratData)
 library(future)
 
+set.seed(1234)
 data <- readRDS("......../data_motifenriched.rds")
 
 module_scores <- read.csv(".../Module_scoring.csv")
