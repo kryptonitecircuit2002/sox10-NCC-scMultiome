@@ -17,7 +17,7 @@ data <- AddModuleScore(data, features = list(melanocytic_genes), name = "Melanoc
 data <- AddModuleScore(data, features = list(glial_genes), name = "Neural_score")
 data <- AddModuleScore(data, features = list(muscle_genes), name = "Muscle_score")
 
-#Represent using Module Score
+#Represent using FeaturePlot
 FeaturePlot(data, features = "Melanocytic_score1", reduction = "umap.rna")+
   scale_colour_gradientn(colours = rev(brewer.pal(n = 11, name = "RdBu")))
 FeaturePlot(data, features = "Neural_score1", reduction = "umap.rna")+
