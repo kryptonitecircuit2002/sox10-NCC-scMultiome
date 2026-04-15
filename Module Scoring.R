@@ -1,7 +1,6 @@
+lapply(required_packages, library, character.only = TRUE)
 library(tidyverse)
 library(RColorBrewer)
-library(Seurat)
-library(SeuratData)
 library(future)
 
 set.seed(1234)
