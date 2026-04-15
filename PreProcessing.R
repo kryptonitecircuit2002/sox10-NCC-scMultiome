@@ -1,18 +1,6 @@
-library(Seurat)
-library(Signac)
-library(dplyr)
-library(ggplot2)
-library(GenomicRanges)
-library(future)
-library(patchwork)
-library(hdf5r)
-library(readr)
-library(pheatmap)
-library(ggrepel)
-library(LSD)
-library(MASS)
-library(ensembldb)
-library(BSgenome.Drerio.UCSC.danRer11)
+required_packages <- c("Seurat", "Signac", "dplyr", "ggplot2", "GenomicRanges", "future", "patchwork", "hdf5r",
+                       "readr", "pheatmap", "ggrepel", "LSD", "MASS", "ensembldb", "rtracklayer")
+lapply(required_packages, library, character.only = TRUE)
 
 set.seed(1234)
 
