@@ -3,6 +3,8 @@ set.seed(1234)
 library(dplyr)
 library(tidyr)
 
+data <- readRDS(".../h3_modulescore.rds")
+
 tfs_of_interest <- c("MA0139.1", "MA0499.2", "MA0500.2", "MA1641.1", "MA1123.2", "MA0003.4", "MA0814.2",
                      "MA1569.1", "MA0811.1", "MA0442.2", "MA0620.3")
 
