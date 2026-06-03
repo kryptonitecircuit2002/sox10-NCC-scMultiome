@@ -1,0 +1,40 @@
+lapply(required_packages, library, character.only = TRUE)
+set.seed(1234)
+H3.combined.sct <- readRDS("E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/H3.3_sample/Data/21.07.2025/Integrated_H3.rds")
+
+# ATAC-seq normalization and visualization
+DefaultAssay(H3.combined.sct) <- "peaks"
+H3.combined.sct <- RunTFIDF(H3.combined.sct)
+H3.combined.sct <- FindTopFeatures(H3.combined.sct, min.cutoff = 'q5')
+H3.combined.sct <- RunSVD(H3.combined.sct)
+
+# Cluster and visualize ATAC-seq data
+H3.combined.sct <- FindNeighbors(H3.combined.sct, reduction = "lsi", dims = 2:30)
+H3.combined.sct <- FindClusters(H3.combined.sct, resolution = 0.5)
+H3.combined.sct <- RunUMAP(H3.combined.sct, dims = 2:30, reduction = "lsi", spread = 0.5, reduction.name = "umap.atac.h3")
+DimPlot(H3.combined.sct, reduction = "umap.atac.h3", label = TRUE, label.size = 4, repel = TRUE, split.by = "orig.ident") + ggtitle("ATAC UMAP")
+
+# Integrate ATAC data
+DefaultAssay(Control_H3) <- "peaks"
+Control_H3 <- RunTFIDF(Control_H3)
+Control_H3 <- FindTopFeatures(Control_H3, min.cutoff = 'q0')
+Control_H3 <- RunSVD(Control_H3, reduction.name = "lsi")
+
+DefaultAssay(H3.3) <- "peaks"
+H3.3 <- RunTFIDF(H3.3)
+H3.3 <- FindTopFeatures(H3.3, min.cutoff = 'q0')
+H3.3 <- RunSVD(H3.3, reduction.name = "lsi")
+
+#Integrate
+integration.anchors.atac.h3 <- FindIntegrationAnchors(object.list = list(Control_H3, H3.3), anchor.features = rownames(Control_H3), reduction = "rlsi", dims = 2:30)
+H3_integrated <- IntegrateEmbeddings(anchorset = integration.anchors.atac.h3, reductions = H3.combined.sct[["lsi"]], new.reduction.name = "integrated_lsi", dims.to.integrate = 2:30)
+H3.combined.sct[['integrated_lsi_atac']] <- CreateDimReducObject(Embeddings(H3_integrated, "integrated_lsi")[colnames(H3.combined.sct),], key = "INTEGRATEDLSIATAC_", assay = "peaks")
+H3.combined.sct <- FindNeighbors(H3.combined.sct, reduction = "integrated_lsi_atac", dims = 2:29)
+H3.combined.sct <- FindClusters(H3.combined.sct, resolution = 0.5)
+H3.combined.sct <- RunUMAP(H3.combined.sct, dims = 2:29, reduction = "integrated_lsi_atac", spread = 0.7, min.dist = 0.3, reduction.name = "umap.atac.int.h3")
+DimPlot(H3.combined.sct, reduction = "umap.atac.int.h3", label = TRUE, label.size = 4, repel = TRUE, split.by = "orig.ident") + ggtitle("ATAC UMAP")
+
+saveRDS(H3.combined.sct, file = ".../h3_integrated_linked.rds")
+saveRDS(H3.3, file = ".../h3_forintegration.rds")
+saveRDS(Control_H3, file = "..../control_forintegration.rds")
+
