@@ -1,7 +1,7 @@
 lapply(required_packages, library, character.only = TRUE)
 set.seed(1234)
 
-H3.combined <- readRDS("..../Integrated_H3.rds")
+H3.combined <- readRDS("..../h3_integrated_linked.rds")
 DimPlot(H3.combined, reduction = "umap.rna.h3", split.by = "orig.ident", label = TRUE, label.size = 4, repel = T)
 
 #RNA Derived
