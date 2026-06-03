@@ -1,6 +1,6 @@
 lapply(required_packages, library, character.only = TRUE)
 set.seed(1234)
-H3.combined.sct <- readRDS("E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/H3.3_sample/Data/21.07.2025/Integrated_H3.rds")
+H3.combined.sct <- readRDS("..../Integrated_H3.rds")
 
 # ATAC-seq normalization and visualization
 DefaultAssay(H3.combined.sct) <- "peaks"
