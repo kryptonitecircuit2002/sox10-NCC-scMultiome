@@ -1,7 +1,7 @@
 lapply(required_packages, library, character.only = TRUE)
 set.seed(1234)
 
-H3.combined <- readRDS("E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/H3.3_sample/Data/21.07.2025/Integrated_H3.rds")
+H3.combined <- readRDS("..../Integrated_H3.rds")
 DimPlot(H3.combined, reduction = "umap.rna.h3", split.by = "orig.ident", label = TRUE, label.size = 4, repel = T)
 
 #RNA Derived
@@ -54,4 +54,4 @@ DotPlot(H3.combined.sct, features = c("twist1a", "grem2b", "col11a1b", "lamc3", 
   guides(size=guide_legend(override.aes=list(shape=21, colour="black", fill="white"))) + 
   RotatedAxis() + 
   coord_flip() + ggtitle("Markers for Cluster Annotation")
-saveRDS(H3.combined.sct, file = "E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/H3.3_sample/Data/21.07.2025/H3_combined_annotated.rds")
+saveRDS(H3.combined.sct, file = "..../H3_combined_annotated.rds")
