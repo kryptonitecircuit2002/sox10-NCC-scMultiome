@@ -36,7 +36,7 @@ Merge_H2 <- SCTransform(Merge_H2, vst.flavor = "v2", verbose = FALSE) %>%
   FindNeighbors(reduction = "pca", dims = 1:30, verbose = FALSE) %>%
   FindClusters(resolution = 0.5, verbose = FALSE)
 
-# Integratio
+# Integration
 H2.list <- SplitObject(Merge_H2, split.by = "orig.ident")
 Control_H2 <- H2.list[["Control"]]
 H2 <- H2.list[["H2A.Z KD"]]
@@ -53,4 +53,4 @@ H2.combined <- FindClusters(H2.combined, resolution = 0.5)
 H2.combined <- RunUMAP(H2.combined, reduction = "pca.h2", reduction.name = "umap.rna.h2", dims = 1:30, verbose = FALSE,  spread = 0.25, min.dist = 0.35)
 DimPlot(H2.combined, reduction = "umap.rna.h2", split.by = "orig.ident", label = TRUE)
 
-saveRDS(H2.combined, file = "Integrated_H2.rds")
+saveRDS(H2.combined, file = "...Integrated_H2.rds")
