@@ -47,5 +47,5 @@ color_layers= c('mesenchymal' ='#efd129',
 Idents(H2.combined) <- H2.combined$celltype.rna_n
 p_rna <- DimPlot(H2.combined, reduction = "umap.rna.h2", split.by = "orig.ident", pt.size = 1.2, cols = color_layers)
 p_rna
-saveRDS(H2.combined, file = "E:/Transit/Single_Cell+ATAC/New_Integrative_Analysis/H2AZ_sample/Data/07.08.2025/Integrated_H2_annotated.rds")
+saveRDS(H2.combined, file = ".../Integrated_H2_annotated.rds")
 
