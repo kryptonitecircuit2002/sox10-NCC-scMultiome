@@ -9,7 +9,7 @@ numpy <- import("numpy")
 scanoramaCT <- import("scanoramaCT")
 
 
-H3.data <- readRDS(".../h3_combined_linked.rds")
+H3.data <- readRDS(".../h3_integrated_linked.rds")
 data_control <- subset(H3.data, idents = "Control")
 data_h3 <- subset(H3.data, idents = "H3.3 KD")
 
