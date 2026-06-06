@@ -1,6 +1,11 @@
 lapply(required_packages, library, character.only = TRUE)
 set.seed(1234)
 
+##Integration
+H2.data <- readRDS(".../sox10ncc_h2az_kd.rds")
+Control <- readRDS(".../sox10_ncc_linked.rds")
+Control <- Control[, sample(colnames(Control), size =669, replace=F)]
+
 #Normalize RNA assay
 DefaultAssay(H2.data) <- "RNA"
 H2.data <- SCTransform(H2.data, vst.flavor = "v2", verbose = FALSE) %>%
@@ -8,11 +13,6 @@ H2.data <- SCTransform(H2.data, vst.flavor = "v2", verbose = FALSE) %>%
   RunUMAP(reduction = "pca", dims = 1:30, verbose = FALSE) %>%
   FindNeighbors(reduction = "pca", dims = 1:30, verbose = FALSE) %>%
   FindClusters(resolution = 0.5, verbose = FALSE)
-
-##Integration
-H2.data <- readRDS(".../sox10ncc_h2az_kd.rds")
-Control <- readRDS(".../sox10_ncc_linked.rds")
-Control <- Control[, sample(colnames(Control), size =669, replace=F)]
 
 #Merge using RNA anchors
 DefaultAssay(Control) <- "SCT"
